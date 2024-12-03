@@ -5,7 +5,7 @@ import java.util.Comparator;
 public class CustomArrayList<E> {
 
     private final int INIT_CAPACITY = 10;
-    private int elementPointer = 0;
+    private int elementAmount = 0;
     E[] customArray;
 
     public CustomArrayList() {
@@ -14,19 +14,18 @@ public class CustomArrayList<E> {
 
     public E[] add(E element) {
 
-        increaseArraySize(elementPointer);
-        customArray[elementPointer++] = element;
+        increaseArraySize(elementAmount);
+        customArray[elementAmount++] = element;
         return customArray;
     }
 
-
     public void add(int index, E element) {
-        if (index < elementPointer) {
-            elementPointer++;
-            increaseArraySize(elementPointer);
-            for (int i = elementPointer; i > index; i--) {
-                E e = customArray[elementPointer];
-                customArray[elementPointer + 1] = e;
+        if (index <= elementAmount) {
+            elementAmount++;
+            increaseArraySize(elementAmount);
+            for (int i = elementAmount; i > index; i--) {
+                E e = customArray[elementAmount];
+                customArray[elementAmount + 1] = e;
             }
             customArray[index] = element;
         } else {
@@ -44,38 +43,37 @@ public class CustomArrayList<E> {
 
     public void addAll(Collection<? extends E> c){
         for (E e : c) {
-            add(customArray.length + 1, e);
+            add(elementAmount, e);
         }
     }
 
     public void clear() {
-
         Arrays.fill(customArray, null);
     }
 
     public E get(int index) {
-        if (index < elementPointer && customArray[index] == null) {
+        if (index < elementAmount && customArray[index] == null) {
             throw new RuntimeException("Not such element");
         } return (E) customArray[index];
     }
 
     public boolean isEmpty() {
-        return customArray.length == 0;
+        return elementAmount == 0;
     }
 
     public void remove(int index){
 
-        if (index < 0 || index >= elementPointer) {
+        if (index < 0 || index >= elementAmount) {
             throw new RuntimeException("нет такого значения по индексу");
         }
-        int moveCount = elementPointer - index - 1;
+        int moveCount = elementAmount - index - 1;
         if (moveCount > 0) {
             System.arraycopy(customArray, index + 1, customArray, index, moveCount);
-        } customArray[--elementPointer] = null;
+        } customArray[--elementAmount] = null;
     }
 
     public void remove(Object o) {
-        for (int i = 0; i < customArray.length; i++) {
+        for (int i = 0; i < elementAmount; i++) {
             if (customArray[i].equals(o)) {
                 remove(i);
             }
@@ -83,8 +81,8 @@ public class CustomArrayList<E> {
     }
 
     public void sort(Comparator<? super E> c) {
-        if (elementPointer > 1) {
-            quickSort(customArray, 0, elementPointer - 1, c);
+        if (elementAmount > 1) {
+            quickSort(customArray, 0, elementAmount - 1, c);
         }
     }
 
@@ -120,9 +118,13 @@ public class CustomArrayList<E> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < customArray.length; i++) {
-            builder = builder.append(this.customArray[i].toString() + " " + i);
+        builder.append("[");
+        for (int i = 0; i < elementAmount; i++) {
+            builder = builder.append(customArray[i].toString() + ", ");
         }
+        int i = builder.toString().length();
+        builder.replace(i-2, i, "");
+        builder.append("]");
         return builder.toString();
     }
 }
